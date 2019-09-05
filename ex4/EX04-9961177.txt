@@ -1,0 +1,530 @@
+COMP23111
+
+2017-2018
+
+EX03
+
+9961177
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SQL> 
+SQL> create or replace view a as
+  2    select DISTINCT firstName,lastName
+  3    From CustomerInfo natural join orderCartInfo;
+
+View created.
+
+SQL> 
+SQL> SELECT * FROM a;
+
+FIRSTNAME            LASTNAME                                                   
+-------------------- --------------------                                       
+Ophelia              Elsinore                                                   
+John                 Booker                                                     
+Mary                 Folio                                                      
+Percy                Byron                                                      
+
+SQL> 
+SQL> create or replace view b as
+  2    select code,itemNum,categoryId,qtyInstock
+  3    from InventoryItem natural join category natural join ItemType
+  4    where qtyInstock<25;
+
+View created.
+
+SQL> 
+SQL> SELECT * FROM b;
+
+CODE                 ITEMNUM    CATEGORYID QTYINSTOCK                           
+-------------------- ---------- ---------- ----------                           
+hbk                  C2         C                  20                           
+hbk                  C2         F                  20                           
+hbk                  C2         H                  20                           
+hbk                  C2         P                  20                           
+hbk                  C2         SF                 20                           
+ebk                  A0         C                  15                           
+ebk                  A0         F                  15                           
+ebk                  A0         H                  15                           
+ebk                  A0         P                  15                           
+ebk                  A0         SF                 15                           
+
+10 rows selected.
+
+SQL> 
+SQL> create or replace view c as
+  2    select orderCartId,loginName,firstName,lastName,orderPrice
+  3    from customerInfo natural join orderCartInfo natural join lineItems
+  4  
+SQL> select * from c;
+
+ORDERCARTI LOGINNAME  FIRSTNAME            LASTNAME             ORDERPRICE      
+---------- ---------- -------------------- -------------------- ----------      
+1          choizeznyc John                 Booker                     2.99      
+8          choizeznyc John                 Booker                     3.99      
+3          choizeznyc John                 Booker                     5.99      
+2          choizeznyc John                 Booker                     3.99      
+1          choizeznyc John                 Booker                     2.99      
+3          choizeznyc John                 Booker                     2.99      
+3          choizeznyc John                 Booker                     3.99      
+4          choizeznyc John                 Booker                     4.99      
+6          choizeznyc John                 Booker                     6.99      
+5          choizeznyc John                 Booker                     2.99      
+7          choizeznyc John                 Booker                     1.99      
+
+ORDERCARTI LOGINNAME  FIRSTNAME            LASTNAME             ORDERPRICE      
+---------- ---------- -------------------- -------------------- ----------      
+1          shkeandco  Mary                 Folio                      2.99      
+8          shkeandco  Mary                 Folio                      3.99      
+3          shkeandco  Mary                 Folio                      5.99      
+2          shkeandco  Mary                 Folio                      3.99      
+1          shkeandco  Mary                 Folio                      2.99      
+3          shkeandco  Mary                 Folio                      2.99      
+3          shkeandco  Mary                 Folio                      3.99      
+4          shkeandco  Mary                 Folio                      4.99      
+6          shkeandco  Mary                 Folio                      6.99      
+5          shkeandco  Mary                 Folio                      2.99      
+7          shkeandco  Mary                 Folio                      1.99      
+
+ORDERCARTI LOGINNAME  FIRSTNAME            LASTNAME             ORDERPRICE      
+---------- ---------- -------------------- -------------------- ----------      
+1          dramab     Ophelia              Elsinore                   2.99      
+8          dramab     Ophelia              Elsinore                   3.99      
+3          dramab     Ophelia              Elsinore                   5.99      
+2          dramab     Ophelia              Elsinore                   3.99      
+1          dramab     Ophelia              Elsinore                   2.99      
+3          dramab     Ophelia              Elsinore                   2.99      
+3          dramab     Ophelia              Elsinore                   3.99      
+4          dramab     Ophelia              Elsinore                   4.99      
+6          dramab     Ophelia              Elsinore                   6.99      
+5          dramab     Ophelia              Elsinore                   2.99      
+7          dramab     Ophelia              Elsinore                   1.99      
+
+ORDERCARTI LOGINNAME  FIRSTNAME            LASTNAME             ORDERPRICE      
+---------- ---------- -------------------- -------------------- ----------      
+1          astrab     Percy                Byron                      2.99      
+8          astrab     Percy                Byron                      3.99      
+3          astrab     Percy                Byron                      5.99      
+2          astrab     Percy                Byron                      3.99      
+1          astrab     Percy                Byron                      2.99      
+3          astrab     Percy                Byron                      2.99      
+3          astrab     Percy                Byron                      3.99      
+4          astrab     Percy                Byron                      4.99      
+6          astrab     Percy                Byron                      6.99      
+5          astrab     Percy                Byron                      2.99      
+7          astrab     Percy                Byron                      1.99      
+
+44 rows selected.
+
+SQL> 
+SQL> create or replace view d as
+  2    select loginName,firstName,lastName,sum(orderPrice)sum
+  3    from customerInfo natural join orderCartInfo natural join lineItems
+  4    group by loginName,firstName,lastName;
+
+View created.
+
+SQL> select * from d;
+
+LOGINNAME  FIRSTNAME            LASTNAME                    SUM                 
+---------- -------------------- -------------------- ----------                 
+shkeandco  Mary                 Folio                     43.89                 
+choizeznyc John                 Booker                    43.89                 
+astrab     Percy                Byron                     43.89                 
+dramab     Ophelia              Elsinore                  43.89                 
+
+SQL> 
+SQL> create or replace view e as
+  2    select distinct loginName, count(orderCartId)cartnum
+  3    from orderCartInfo natural join customerInfo
+  4    group by loginName;
+
+View created.
+
+SQL> 
+SQL> select loginName,
+  2  CASE
+  3  	 WHEN cartnum > 2 THEN 'BR-1 violated'
+  4  	 ELSE 'BR-1 satisfied'
+  5  END as case1
+  6  from e;
+
+LOGINNAME  CASE1                                                                
+---------- --------------                                                       
+astrab     BR-1 violated                                                        
+choizeznyc BR-1 violated                                                        
+dramab     BR-1 violated                                                        
+shkeandco  BR-1 violated                                                        
+
+SQL> 
+SQL> select itemNum,itemSize,itemColor,count(itemNum)as count
+  2  from inventoryItem natural join itemType
+  3  group by itemColor,itemSize,itemNum;
+
+ITEMNUM      ITEMSIZE ITEMCOLOR            COUNT                                
+---------- ---------- --------------- ----------                                
+A3                  2 black                    1                                
+A0                  4 green                    2                                
+A2                  3 green                    1                                
+A0                  3 black                    1                                
+B1                  4 white                    1                                
+C1                  4 black                    1                                
+C2                  3 black                    2                                
+
+7 rows selected.
+
+SQL> 
+SQL> select
+  2  CASE
+  3  	 WHEN count > 1 THEN 'BR-2 violated'
+  4  	 ELSE 'BR-2 satisfied'
+  5  END as case1
+  6  from (
+  7    select itemNum,itemSize,itemColor,count(itemNum)as count
+  8    from inventoryItem natural join itemType
+  9    group by itemColor,itemSize,itemNum
+ 10  );
+
+CASE1                                                                           
+--------------                                                                  
+BR-2 satisfied                                                                  
+BR-2 violated                                                                   
+BR-2 satisfied                                                                  
+BR-2 satisfied                                                                  
+BR-2 satisfied                                                                  
+BR-2 satisfied                                                                  
+BR-2 violated                                                                   
+
+7 rows selected.
+
+SQL> 
+SQL> 
+SQL> select itemNum,itemColor,itemSize,
+  2  CASE
+  3  	 WHEN count > 1 THEN 'BR-2 violated'
+  4  	 ELSE 'BR-2 satisfied'
+  5  END as case1
+  6  from (
+  7    select itemNum,itemSize,itemColor,count(itemNum)as count
+  8    from inventoryItem natural join itemType
+  9    group by itemColor,itemSize,itemNum
+ 10  )
+ 11  where count>1;
+
+ITEMNUM    ITEMCOLOR         ITEMSIZE CASE1                                     
+---------- --------------- ---------- --------------                            
+A0         green                    4 BR-2 violated                             
+C2         black                    3 BR-2 violated                             
+
+SQL> 
+SQL> 
+SQL> 	     CREATE or replace TRIGGER tr_price before insert or update on itemType for each row
+  2  	     declare minimum float;
+  3  	     begin
+  4  	       select min(price)
+  5  	       into minimum
+  6  	       from itemType;
+  7  	       if :new.price > 4*minimum
+  8  		 then
+  9  		 raise_application_error (-20000,'new price can not over 4 times min old price');
+ 10  	       END IF;
+ 11  	     end;
+ 12  	     /
+
+Trigger created.
+
+SQL> 
+SQL> select * from itemType;
+
+ITEMNUM    NAME                                                                 
+---------- --------------------                                                 
+PICTURE                                                 PRICE BELONGSTO         
+-------------------------------------------------- ---------- ----------        
+A0         The Anarchy of Mask                                                  
+***                                                     10.99 P                 
+                                                                                
+A1         The Butler Did                                                       
+---                                                     11.99 C                 
+                                                                                
+A2         The Abolished Man                                                    
+===                                                     15.99 SF                
+                                                                                
+
+ITEMNUM    NAME                                                                 
+---------- --------------------                                                 
+PICTURE                                                 PRICE BELONGSTO         
+-------------------------------------------------- ---------- ----------        
+A3         Lyrical Bullets                                                      
++-+-                                                    20.99 P                 
+                                                                                
+B1         The Postlude                                                         
+=\=\=                                                   34.99 P                 
+                                                                                
+C1         The August of Guns                                                   
+**--                                                    10.99 H                 
+                                                                                
+
+ITEMNUM    NAME                                                                 
+---------- --------------------                                                 
+PICTURE                                                 PRICE BELONGSTO         
+-------------------------------------------------- ---------- ----------        
+C2         The Expectant Mirror                                                 
+^-^                                                     12.99 H                 
+                                                                                
+
+7 rows selected.
+
+SQL> 
+SQL> insert into itemType values ('D2', 'awefawef', '---', 1000, 'C');
+insert into itemType values ('D2', 'awefawef', '---', 1000, 'C')
+            *
+ERROR at line 1:
+ORA-20000: new price can not over 4 times min old price 
+ORA-06512: at "MBAXAQZ2.TR_PRICE", line 8 
+ORA-04088: error during execution of trigger 'MBAXAQZ2.TR_PRICE' 
+
+
+SQL>   select * from itemType;
+
+ITEMNUM    NAME                                                                 
+---------- --------------------                                                 
+PICTURE                                                 PRICE BELONGSTO         
+-------------------------------------------------- ---------- ----------        
+A0         The Anarchy of Mask                                                  
+***                                                     10.99 P                 
+                                                                                
+A1         The Butler Did                                                       
+---                                                     11.99 C                 
+                                                                                
+A2         The Abolished Man                                                    
+===                                                     15.99 SF                
+                                                                                
+
+ITEMNUM    NAME                                                                 
+---------- --------------------                                                 
+PICTURE                                                 PRICE BELONGSTO         
+-------------------------------------------------- ---------- ----------        
+A3         Lyrical Bullets                                                      
++-+-                                                    20.99 P                 
+                                                                                
+B1         The Postlude                                                         
+=\=\=                                                   34.99 P                 
+                                                                                
+C1         The August of Guns                                                   
+**--                                                    10.99 H                 
+                                                                                
+
+ITEMNUM    NAME                                                                 
+---------- --------------------                                                 
+PICTURE                                                 PRICE BELONGSTO         
+-------------------------------------------------- ---------- ----------        
+C2         The Expectant Mirror                                                 
+^-^                                                     12.99 H                 
+                                                                                
+
+7 rows selected.
+
+SQL> insert into itemType values ('D3', 'awefawef', '---', 1, 'C');
+
+1 row created.
+
+SQL>   select * from itemType;
+
+ITEMNUM    NAME                                                                 
+---------- --------------------                                                 
+PICTURE                                                 PRICE BELONGSTO         
+-------------------------------------------------- ---------- ----------        
+A0         The Anarchy of Mask                                                  
+***                                                     10.99 P                 
+                                                                                
+A1         The Butler Did                                                       
+---                                                     11.99 C                 
+                                                                                
+A2         The Abolished Man                                                    
+===                                                     15.99 SF                
+                                                                                
+
+ITEMNUM    NAME                                                                 
+---------- --------------------                                                 
+PICTURE                                                 PRICE BELONGSTO         
+-------------------------------------------------- ---------- ----------        
+A3         Lyrical Bullets                                                      
++-+-                                                    20.99 P                 
+                                                                                
+B1         The Postlude                                                         
+=\=\=                                                   34.99 P                 
+                                                                                
+C1         The August of Guns                                                   
+**--                                                    10.99 H                 
+                                                                                
+
+ITEMNUM    NAME                                                                 
+---------- --------------------                                                 
+PICTURE                                                 PRICE BELONGSTO         
+-------------------------------------------------- ---------- ----------        
+C2         The Expectant Mirror                                                 
+^-^                                                     12.99 H                 
+                                                                                
+D3         awefawef                                                             
+---                                                         1 C                 
+                                                                                
+
+8 rows selected.
+
+SQL> 
+SQL> update itemType
+  2  set price = 1
+  3  where itemNum = 'C2';
+update itemType
+       *
+ERROR at line 1:
+ORA-04091: table MBAXAQZ2.ITEMTYPE is mutating, trigger/function may not see it 
+ORA-06512: at "MBAXAQZ2.TR_PRICE", line 3 
+ORA-04088: error during execution of trigger 'MBAXAQZ2.TR_PRICE' 
+
+
+SQL> select * from itemType;
+
+ITEMNUM    NAME                                                                 
+---------- --------------------                                                 
+PICTURE                                                 PRICE BELONGSTO         
+-------------------------------------------------- ---------- ----------        
+A0         The Anarchy of Mask                                                  
+***                                                     10.99 P                 
+                                                                                
+A1         The Butler Did                                                       
+---                                                     11.99 C                 
+                                                                                
+A2         The Abolished Man                                                    
+===                                                     15.99 SF                
+                                                                                
+
+ITEMNUM    NAME                                                                 
+---------- --------------------                                                 
+PICTURE                                                 PRICE BELONGSTO         
+-------------------------------------------------- ---------- ----------        
+A3         Lyrical Bullets                                                      
++-+-                                                    20.99 P                 
+                                                                                
+B1         The Postlude                                                         
+=\=\=                                                   34.99 P                 
+                                                                                
+C1         The August of Guns                                                   
+**--                                                    10.99 H                 
+                                                                                
+
+ITEMNUM    NAME                                                                 
+---------- --------------------                                                 
+PICTURE                                                 PRICE BELONGSTO         
+-------------------------------------------------- ---------- ----------        
+C2         The Expectant Mirror                                                 
+^-^                                                     12.99 H                 
+                                                                                
+D3         awefawef                                                             
+---                                                         1 C                 
+                                                                                
+
+8 rows selected.
+
+SQL> 
+SQL> update itemType
+  2  set price = 100
+  3  where itemNum = 'C2';
+update itemType
+       *
+ERROR at line 1:
+ORA-04091: table MBAXAQZ2.ITEMTYPE is mutating, trigger/function may not see it 
+ORA-06512: at "MBAXAQZ2.TR_PRICE", line 3 
+ORA-04088: error during execution of trigger 'MBAXAQZ2.TR_PRICE' 
+
+
+SQL> select * from itemType;
+
+ITEMNUM    NAME                                                                 
+---------- --------------------                                                 
+PICTURE                                                 PRICE BELONGSTO         
+-------------------------------------------------- ---------- ----------        
+A0         The Anarchy of Mask                                                  
+***                                                     10.99 P                 
+                                                                                
+A1         The Butler Did                                                       
+---                                                     11.99 C                 
+                                                                                
+A2         The Abolished Man                                                    
+===                                                     15.99 SF                
+                                                                                
+
+ITEMNUM    NAME                                                                 
+---------- --------------------                                                 
+PICTURE                                                 PRICE BELONGSTO         
+-------------------------------------------------- ---------- ----------        
+A3         Lyrical Bullets                                                      
++-+-                                                    20.99 P                 
+                                                                                
+B1         The Postlude                                                         
+=\=\=                                                   34.99 P                 
+                                                                                
+C1         The August of Guns                                                   
+**--                                                    10.99 H                 
+                                                                                
+
+ITEMNUM    NAME                                                                 
+---------- --------------------                                                 
+PICTURE                                                 PRICE BELONGSTO         
+-------------------------------------------------- ---------- ----------        
+C2         The Expectant Mirror                                                 
+^-^                                                     12.99 H                 
+                                                                                
+D3         awefawef                                                             
+---                                                         1 C                 
+                                                                                
+
+8 rows selected.
+
+SQL> 
+SQL> 
+SQL> spool off

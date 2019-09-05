@@ -1,0 +1,54 @@
+\documentclass[a4paper]{article}
+\begin{document}
+COMP23111
+
+2017-2018
+
+EX01
+
+9961177
+\newpage
+
+Manager \(manager\_ID,name,telephone\)
+pk\[manager\_ID\]
+
+ManPhone \(manager\_ID,telephone\)
+pk\[manager\_ID,telephone\],
+fk\[manager\_ID \-\> Manager.manager\_ID\]
+
+Artist \(artistic\_name,genre,managedBy,hasContract\)
+pk\[artistic\_name\],
+fk\[managedBy \-\> Manager.manager\_ID\]
+
+Album \(album\_ID,title,createdBy\)
+pk\[album\_ID\],
+fk\[createdBy \-\> Artist.artistic\_name\]
+
+MasterTrack \(trac\_ID,working\_title,working\_length,recordedBy,editedBy\)
+pk\[track\_ID\],
+fk\[recordedBy \-\> Artist.artistic\_name,
+editedBy \-\> SoundEngineer.sound\_eng\_id\]
+
+SoundEngineer \(sound\_eng\_ID,name\)
+pk\[sound\_eng\_ID\]
+
+ContractInfo \(hasContract,date\_from,date\_to ,duration \[derived as \(date\
+_to \- date\_from \) \] \)
+pk\[hasContract,date\_from,date\_to\],
+fk\[hasContract \-\> Artist.artistic\_name
+
+FinishedTrack \(originatesFrom,version,released\_title,final\_length\)
+pk\[originatesFrom,version\],
+fk\[originatesFrom \-\> MasterTrack.track\_ID\]
+
+Buyer\(buyer\_id, name, registered\_on\)
+pk\[buyer\_id\]
+
+orders\(order\_number, place\_on, dispatch\_date, placedBy, compriseds\)
+pk\[order\_number\]
+fk\[placeby\-\>buyer.buyer\_id,\]
+
+catalogueEntry\(release\_date, stock, price, ListedAs\)
+pk\[release\_date, ListedAs\]
+fk\[listedAs\-\>Album.album\_ID\]
+\end{document}

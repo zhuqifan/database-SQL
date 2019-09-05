@@ -1,0 +1,143 @@
+COMP23111
+
+2017-2018
+
+EX03
+
+9961177
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+select name
+from student
+where dept_name = "Comp. Sci.";
+
+select id,name
+from studen natural join takes
+minus
+select id,name
+from studen natural join takes
+where year<2009;
+
+select dept_name, max(salary)
+from instructor
+group by dept_name;
+
+
+select min(maximum_salary)
+from (
+select dept_name, max(salary)maximum_salary
+from instructor
+group by dept_name
+);
+
+
+INSERT INTO course(course_id, title, dept_name, credits) VALUES ('CS-001', 'Weekly Seminar', 'Comp. Sci.', 10);
+INSERT INTO course(course_id, title, dept_name, credits) VALUES ('CS-001', 'Monthly Seminar', 'Comp. Sci.', 0);
+ORA-02290: check constraint (MBAXAQZ2.SYS_C00956321) violated
+the error occur because the credit for the course can not be 0;
+
+
+INSERT INTO SECTION(course_id, sec_id, semester, YEAR) VALUES ('CS-001', '1', 'Fall', 2009);
+the columns building, room_no, time_slot_id are missing. but i still add the row successfully
+
+
+insert into takes(id,course_id,sec_id,semester,year)
+select id,'CS-001','1','Fall',2009
+from student
+where dept_name='Comp. Sci.';
+
+SQL> delete from takes
+  2  where(course_id = 'CS-001')and(sec_id = '1')and(semester='Fall')and(year=2009)
+  3  and(id in(
+  4  select id
+  5  from student
+  6  where name = 'Zhang'
+  7  )
+  8  );
+
+SQL> delete from takes
+  2  where course_id in(
+  3  select course_id
+  4  from course
+  5  where lower(title) like '%database%');
+
+SQL> delete from course
+  2  where course_id = 'CS-001';
+there is no error message
+1 line is deleted
+it is because the foreign key'course_id'of section has on delete cascade
+so the one in section will be deleted when the course cs001 is deleted in course.
+
+
+select count(distinct report_number)
+from accident natural join participated
+where driver_id in(
+  select driver_id
+  from person
+  where name ='Jane Rowling');
+
+update participated
+  set damage_amount = 2500
+  where report_number = '7897423' and license = 'KUY 629';
+
+select name,damage_amount
+ from person natural join participated
+where damage_amount>3000
+order by damage_amount DESC;
+
+create view average_damage_per_location as
+  select location, avg(damage_amount)as average
+  from accident natural join participated
+  group by location;
+
+select location
+from(select * from average_damage_per_location
+  order by avg(damage_amount) DESC)
+  limit 1;
